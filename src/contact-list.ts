@@ -1,19 +1,19 @@
 import {WebAPI} from './web-api';
-    import {inject} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
 
-    @inject(WebAPI)
-    export class ContactList {
-      constructor(api) {
-        this.api = api;
-        this.contacts = [];
-      }
+@inject(WebAPI)
+export class ContactList {
+  contacts;
+  selectedId = 0;
 
-      created() {
-        this.api.getContactList().then(contacts => this.contacts = contacts);
-      }
+  constructor(private api: WebAPI) { }
 
-      select(contact) {
-        this.selectedId = contact.id;
-        return true;
-      }
-    }
+  created() {
+    this.api.getContactList().then(contacts => this.contacts = contacts);
+  }
+
+  select(contact) {
+    this.selectedId = contact.id;
+    return true;
+  }
+}
