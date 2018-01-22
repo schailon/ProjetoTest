@@ -1,89 +1,118 @@
 let latency = 600;
 let id = 0;
 
-function getId(){
+function getId() {
   return ++id;
 }
 
 let contacts = [
   {
-    id:getId(),
-    firstName:'John',
-    lastName:'Tolkien',
-    email:'tolkien@inklings.com',
-    phoneNumber:'867-5309'
+    id: getId(),
+    firstName: 'John',
+    lastName: 'Tolkien',
+    email: 'tolkien@inklings.com',
+    phoneNumber: '867-5309'
   },
   {
-    id:getId(),
-    firstName:'Clive',
-    lastName:'Lewis',
-    email:'lewis@inklings.com',
-    phoneNumber:'867-5309'
+    id: getId(),
+    firstName: 'Clive',
+    lastName: 'Lewis',
+    email: 'lewis@inklings.com',
+    phoneNumber: '867-5309'
   },
   {
-    id:getId(),
-    firstName:'Owen',
-    lastName:'Barfield',
-    email:'barfield@inklings.com',
-    phoneNumber:'867-5309'
+    id: getId(),
+    firstName: 'Owen',
+    lastName: 'Barfield',
+    email: 'barfield@inklings.com',
+    phoneNumber: '867-5309'
   },
   {
-    id:getId(),
-    firstName:'Charles',
-    lastName:'Williams',
-    email:'williams@inklings.com',
-    phoneNumber:'867-5309'
+    id: getId(),
+    firstName: 'Charles',
+    lastName: 'Williams',
+    email: 'williams@inklings.com',
+    phoneNumber: '867-5309'
   },
   {
-    id:getId(),
-    firstName:'Roger',
-    lastName:'Green',
-    email:'green@inklings.com',
-    phoneNumber:'867-5309'
+    id: getId(),
+    firstName: 'Roger',
+    lastName: 'Green',
+    email: 'green@inklings.com',
+    phoneNumber: '867-5309'
   }
 ];
 
+import { HttpClient } from 'aurelia-http-client';
+let client = new HttpClient();
+
+
 export class WebAPI {
   isRequesting = false;
-  
-  getContactList(){
+
+  constructor() {
+    let client = new HttpClient()
+      .configure(x => {
+        x.withBaseUrl('http://localhost:50923/api/');
+      });
+  }
+
+  getContactList() {
     this.isRequesting = true;
+
+    // client
+    //   .fetch('person/', {
+    //     method: 'get'
+    //   })
+    //   .then(response => {
+    //     debugger
+    //     var data = response.json();
+    //     this.isRequesting = false;
+    //   })
+    //   .catch(error => {
+    //     alert('Error saving comment!');
+    //     this.isRequesting = false;
+    //   });
+
     return new Promise(resolve => {
       setTimeout(() => {
-        let results = contacts.map(x =>  { return {
-          id:x.id,
-          firstName:x.firstName,
-          lastName:x.lastName,
-          email:x.email
-        }});
+        let results = contacts.map(x => {
+          return {
+            id: x.id,
+            firstName: x.firstName,
+            lastName: x.lastName,
+            email: x.email,
+            phoneNumber: x.phoneNumber
+          }
+        });
         resolve(results);
-        this.isRequesting = false;
+
       }, latency);
     });
   }
 
-  getContactDetails(id){
+  getContactDetails(id) {
+    console.log("Ingreso");
     this.isRequesting = true;
-    return new Promise(resolve => {
-      setTimeout(() => {
-        let found = contacts.filter(x => x.id == id)[0];
-        resolve(JSON.parse(JSON.stringify(found)));
-        this.isRequesting = false;
-      }, latency);
-    });
+    let client = new HttpClient()
+      .configure(x => {
+        x.withBaseUrl('http://localhost:50923/api/');
+      });
+
+    return client.get('person/' + id);
   }
 
-  saveContact(contact){
+  saveContact(contact) {
     this.isRequesting = true;
     return new Promise(resolve => {
       setTimeout(() => {
         let instance = JSON.parse(JSON.stringify(contact));
         let found = contacts.filter(x => x.id == contact.id)[0];
 
-        if(found){
+        if (found) {
           let index = contacts.indexOf(found);
           contacts[index] = instance;
-        }else{
+        } else {
           instance.id = getId();
           contacts.push(instance);
         }
